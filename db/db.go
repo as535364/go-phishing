@@ -27,12 +27,12 @@ func Connect() {
 }
 
 //Insert data
-func Insert(s string){
+func Insert(s string) {
 	// fishes 是這個 list 的名字（key）
 	fishes := []byte("fishes")
 
 	// 把字串 s 加到 fishes 裡面
-	db.RPush(fishes,[]byte(s))
+	db.RPush(fishes, []byte(s))
 }
 
 //SelectAll data from DB
@@ -42,10 +42,10 @@ func SelectAll() []string {
 	nFish, _ := db.LLen(fishes)
 	// list 取資料
 	datas, _ := db.LRange(fishes, 0, int32(nFish))
-	// 取出來資料型別為 []byte 轉型成 string 放到 strs 
+	// 取出來資料型別為 []byte 轉型成 string 放到 strs
 	strs := []string{}
-	for _,data := range datas {
+	for _, data := range datas {
 		strs = append(strs, string(data))
 	}
-	return strs	
+	return strs
 }

