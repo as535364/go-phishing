@@ -49,7 +49,8 @@ func SelectAll() []string {
 	}
 	return strs
 }
+
 // DelAll data of DB
-func DelAll(){
+func DelAll() {
 	db.LClear([]byte("fishes"))
 }
