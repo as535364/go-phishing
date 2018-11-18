@@ -39,15 +39,9 @@ func Insert(s string){
 func SelectAll() []string {
 	fishes := []byte("fishes")
 	// list 長度
-	nFish, err := db.LLen(fishes)
-	if err != nil{
-		panic(err)
-	}
+	nFish, _ := db.LLen(fishes)
 	// list 取資料
-	datas, err := db.LRange(fishes, 0, int32(nFish))
-	if err != nil{
-		panic(err)
-	}
+	datas, _ := db.LRange(fishes, 0, int32(nFish))
 	// 取出來資料型別為 []byte 轉型成 string 放到 strs 
 	strs := []string{}
 	for _,data := range datas {
