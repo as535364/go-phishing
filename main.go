@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"go-phishing/db"
 	"io/ioutil"
 	"net/http"
@@ -159,9 +158,6 @@ func main() {
 	flag.StringVar(&phishURL, "phishURL", "http://localhost:8080", "部屬的網域：")
 	flag.StringVar(&port, "port", ":8080", "部屬的 port：")
 	flag.Parse()
-	// logrus
-	l := logrus.New()
-	l.Info("Server listened on 8080 port!")
 	// db
 	db.Connect()
 	// http server
