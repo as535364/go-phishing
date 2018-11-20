@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const upstreamURL = "https://github.com"
+const upstreamURL = "https://github.com/"
 
 var (
 	phishURL string
